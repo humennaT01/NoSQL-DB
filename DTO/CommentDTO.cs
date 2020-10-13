@@ -2,9 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace DTO
 {
@@ -12,17 +10,16 @@ namespace DTO
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string CommentId { get; set; }
         [BsonElement("authorId")]
         public int AuthorID { get; set; }
         [BsonElement("text")]
         public string Text { get; set; }
         [BsonElement("likes")]
-        public List<LikeDTO> Likes { get; set; }
+        public int Likes { get; set; }
         [BsonElement("insertTime")]
-        public BsonTimestamp InsertTime { get; set; }
+        public DateTime InsertTime { get; set; }
         [BsonElement("updateTime")]
-        public BsonTimestamp UpdateTime { get; set; }
-
+        public DateTime UpdateTime { get; set; }
     }
 }
