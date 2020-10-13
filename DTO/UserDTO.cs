@@ -8,7 +8,9 @@ namespace DTO
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string UserId { get; set; }
+        public string _id { get; set; }
+        [BsonElement("userId")]
+        public int UserId { get; set; }
         [BsonElement("firstName")]
         public string FirstName { get; set; }
         [BsonElement("lastName")]
@@ -22,6 +24,6 @@ namespace DTO
         [BsonElement("interests")]
         public List<string> Interests { get; set; }
         [BsonElement("friendsID")]
-        public List<int> FriendsID { get; set; }
+        public List<int> Friends { get; set; }
     }
 }

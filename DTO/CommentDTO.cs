@@ -8,9 +8,8 @@ namespace DTO
 {
     public class CommentDTO
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string CommentId { get; set; }
+        [BsonElement("commentId")]
+        public int CommentId { get; set; }
         [BsonElement("authorId")]
         public int AuthorID { get; set; }
         [BsonElement("text")]

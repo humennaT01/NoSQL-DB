@@ -9,7 +9,9 @@ namespace DTO
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string PostId { get; set; }
+        public string _id { get; set; }
+        [BsonElement("postId")]
+        public int PostId { get; set; }
         [BsonElement("userId")]
         public int UserID { get; set; }
         [BsonElement("title")]
