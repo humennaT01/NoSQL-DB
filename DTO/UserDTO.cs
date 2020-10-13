@@ -23,7 +23,7 @@ namespace DTO
         public string Password { get; set; }
         [BsonElement("interests")]
         public List<string> Interests { get; set; }
-        [BsonElement("friendsID")]
+        [BsonElement("friends")]
         public List<int> Friends { get; set; }
     }
 }
