@@ -1,0 +1,161 @@
+[{
+  "_id": {
+    "$oid": "5f8609588ebf949cfc8c1738"
+  },
+  "postId": 1,
+  "userId": 1,
+  "title": "Hobbies",
+  "body": "I have a lot of hobbies!",
+  "likes": 0,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-13T20:08:56.633Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-13T20:08:56.633Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f8609cc8ebf949cfc8c1739"
+  },
+  "postId": 2,
+  "userId": 3,
+  "title": "MyFirstPost",
+  "body": "Hello!",
+  "likes": 0,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-13T20:10:52.265Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-13T20:10:52.265Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f8609f68ebf949cfc8c173a"
+  },
+  "postId": 3,
+  "userId": 5,
+  "title": "Today",
+  "body": "I like this day!",
+  "likes": 0,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-13T20:11:34.535Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-13T20:11:34.535Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f86abaec0994864f4f3e1ba"
+  },
+  "postId": 4,
+  "userId": 6,
+  "title": "NewFrind",
+  "body": "I am happy to be here!",
+  "likes": 4,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-14T07:41:34.171Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-14T07:41:34.171Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f86ac05c0994864f4f3e1bb"
+  },
+  "postId": 5,
+  "userId": 4,
+  "title": "Book",
+  "body": "Today I bought a new book. Hope it will be interesting:)",
+  "likes": 2,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-14T07:43:01.569Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-14T07:43:01.569Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f86ac92c0994864f4f3e1bc"
+  },
+  "postId": 6,
+  "userId": 9,
+  "title": "MusicBand",
+  "body": "Is here someone who wanna be in my new MusicBand?!",
+  "likes": 10,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-14T07:45:22.030Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-14T07:45:22.030Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f86ace1c0994864f4f3e1bd"
+  },
+  "postId": 7,
+  "userId": 9,
+  "title": "MusicBand",
+  "body": "Let’s meet on Monday at 8 o’clock",
+  "likes": 10,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-14T07:46:41.796Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-14T07:46:41.796Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f86ad4ac0994864f4f3e1be"
+  },
+  "postId": 8,
+  "userId": 8,
+  "title": "NewCountry",
+  "body": "I plan to go to a new country… But can’t choose where I want)",
+  "likes": 0,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-14T07:48:26.946Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-14T07:48:26.946Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f86ad92c0994864f4f3e1bf"
+  },
+  "postId": 9,
+  "userId": 8,
+  "title": "NewCountry",
+  "body": "Maybe Brazil… what do you think?",
+  "likes": 8,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-14T07:49:38.661Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-14T07:49:38.661Z"
+  }
+},{
+  "_id": {
+    "$oid": "5f86ade7c0994864f4f3e1c0"
+  },
+  "postId": 10,
+  "userId": 3,
+  "title": "MyFirstPost",
+  "body": "Heloooooo:)",
+  "likes": 13,
+  "comments": [],
+  "insertTime": {
+    "$date": "2020-10-14T07:51:03.241Z"
+  },
+  "updateTime": {
+    "$date": "2020-10-14T07:51:03.241Z"
+  }
+}]
