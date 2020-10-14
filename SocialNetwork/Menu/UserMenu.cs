@@ -54,6 +54,9 @@ namespace SocialNetwork.Menu
                             getPosts(user);
                             menuList();
                             break;
+                        case 6:
+                            addNewPost(user.UserId);
+                            break;
                         case 0:
                             flag = false;
                             break;
@@ -160,6 +163,7 @@ namespace SocialNetwork.Menu
             Console.WriteLine("3. Add new friend.");
             Console.WriteLine("4. Delete friend.");
             Console.WriteLine("5. See all posts again.");
+            Console.WriteLine("6. Add new post.");
             Console.WriteLine("0. Exit.");
         }
 
@@ -267,6 +271,21 @@ namespace SocialNetwork.Menu
                 count++;
             }
             userDal.UpdateUser(user);
+        }
+
+        private void addNewPost(int userId)
+        {
+            PostDTO post = new PostDTO();
+            Console.WriteLine("Enter Title: ");
+            post.Title = Console.ReadLine();
+            Console.WriteLine("Enter Text: ");
+            post.Body = Console.ReadLine();
+            post.Likes = 0;
+            post.Comments = new List<CommentDTO>();
+            post.InsertTime = DateTime.UtcNow;
+            post.UpdateTime = DateTime.UtcNow;
+            post.UserID = userId;
+            postDal.CreatePost(post);
         }
     }
 }

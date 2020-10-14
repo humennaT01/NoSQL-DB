@@ -129,7 +129,8 @@ namespace SocialNetwork.Menu
                             isFind = true;
                             user = u;
                             enterPassword(user);
-                            flag = false;
+                            return user;
+                            //flag = false;
                         }
                     }
                     if (isFind == false) throw new Exception();
