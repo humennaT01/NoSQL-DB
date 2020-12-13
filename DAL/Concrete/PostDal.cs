@@ -13,9 +13,9 @@ namespace DAL.Concrete
     {
         private string connectionString;
 
-        public PostDal(string connectionString)
+        public PostDal()
         {
-            this.connectionString = connectionString;
+            this.connectionString = "mongodb://localhost:27017";
         }
 
         public void AddComment(int id, CommentDTO comment)

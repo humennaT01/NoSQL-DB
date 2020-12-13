@@ -11,9 +11,9 @@ namespace DAL.Concrete
     {
         private string connectionString;
 
-        public UserDal(string connectionString)
+        public UserDal()
         {
-            this.connectionString = connectionString;
+            this.connectionString = "mongodb://localhost:27017";
         }
 
         public UserDTO CreateUser(UserDTO user)
