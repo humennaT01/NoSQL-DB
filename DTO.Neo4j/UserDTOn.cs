@@ -9,7 +9,7 @@ namespace DTO.Neo4j
 {
     public class UserDTOn
     {
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "userId")]
         public int userId { get; set; }
         [JsonProperty(PropertyName = "name")]
         public string firstName { get; set; }
