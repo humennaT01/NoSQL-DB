@@ -16,7 +16,7 @@ namespace DALNeo4j.Concrete
 
         public UserDALn()
         {
-            _client = new GraphClient(new Uri("http://localhost:7474/db/data"), "neo4j", "1111");
+            _client = new GraphClient(new Uri("http://localhost:7474"), "neo4j", "1111");
             _client.Connect();
         }
 
@@ -125,6 +125,27 @@ namespace DALNeo4j.Concrete
                 .Where((UserDTOn u) => u.userId == id)
                 .Return(f => f.As<UserDTOn>())
                 .Results.ToList();
+        }
+
+        public UserDTOn GetUserByLogin(string login)
+        {
+            var user = _client.Cypher
+                   .Match("(u:User)")
+                   .Where((UserDTOn u) => u.login == login)
+                   .Return(u => u.As<UserDTOn>())
+                   .Results;
+            UserDTOn result = new UserDTOn()
+            {
+                login = login
+            };
+            foreach (var u in user)
+            {
+                result.userId = u.userId;
+                result.lastName = u.lastName;
+                result.login = u.login;
+                result.firstName = u.firstName;
+            }
+            return result;
         }
 
         public void UpdateUser(UserDTOn user)
