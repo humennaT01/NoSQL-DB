@@ -14,8 +14,7 @@ namespace DALNeo4j.Interfaces
         void UpdateUser(UserDTOn user);
         void DeleteUser(UserDTOn user);
 
-        List<UserDTOn> GetUsers();
-
+        List<UserDTOn> GetFriends(int id);
         void AddFriend(UserDTOn user, UserDTOn friend);
         void RemoveFriend(UserDTOn user, UserDTOn friend);
         bool IsFriends(UserDTOn user1, UserDTOn user2);

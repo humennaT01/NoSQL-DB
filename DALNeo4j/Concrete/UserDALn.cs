@@ -22,7 +22,7 @@ namespace DALNeo4j.Concrete
 
         public void AddFriend(UserDTOn user, UserDTOn friend)
         {
-            client.Cypher
+            _client.Cypher
                 .Match("(u1:User),(u2:User)")
                 .Where("u1.userId = {user_id1}")
                 .AndWhere("u2.userId = {user_id2}")
@@ -60,18 +60,22 @@ namespace DALNeo4j.Concrete
                 .Return(u => u.As<UserDTOn>())
                 .Results;
             UserDTOn result = new UserDTOn() {
-                userId = id,
-                firstName = user.firstName,
-                lastName = user.lastName,
-                login = user.login
+                userId = id
             };
+            foreach(var u in user)
+            {
+                result.userId = u.userId;
+                result.lastName = u.lastName;
+                result.login = u.login;
+                result.firstName = u.firstName;
+            }
             return result;
         }
 
         public bool IsFriends(UserDTOn user1, UserDTOn user2)
         {
             var isFriends = _client.Cypher
-                 .Match("(user1:User)-[r:Friends]-(user2:User)")
+                 .Match("(user1:User)-[r:FRIEND]-(user2:User)")
                  .Where((UserDTOn u1) => u1.userId == user1.userId)
                  .AndWhere((UserDTOn u2) => u2.userId == user2.userId)
                  .Return(f => f.As<Friends>()).Results;
@@ -85,7 +89,7 @@ namespace DALNeo4j.Concrete
         public void RemoveFriend(UserDTOn user, UserDTOn friend)
         {
             _client.Cypher
-                    .Match("(u1:User)-[f:Friends]-(u2:User)")
+                    .Match("(u1:User)-[f:FRIEND]-(u2:User)")
                     .Where("u1.userId = {user_id1}")
                     .AndWhere("u2.userId = {user_id2}")
                     .WithParam("user_id1", user.userId)
@@ -98,30 +102,34 @@ namespace DALNeo4j.Concrete
         {
             if (id1 == id2) { return new List<UserDTOn>(); }
             var path = _client.Cypher
-                .Match("(u1:User{userId: {user_id1} }),(u2:User{userId: {user_id2} }),p = shortestPath((u1)-[:Friends*]-(u2))")
+                .Match("(u1:User{userId: {user_id1} }),(u2:User{userId: {user_id2} }),p = shortestPath((u1)-[:FRIEND*]-(u2))")
                 .WithParam("user_id1", id1)
                 .WithParam("user_id2", id2)
-                .Return((r,len) => new
+                .Return((r, len) => new
                 {
-                    shortestPath = Neo4jClient.Cypher.Return.As<IEnumerable<Node<UserDTOn>>>("nodes(p)")
+                    shortestPath = Return.As<IEnumerable<Node<UserDTOn>>>("nodes(p)")
                 }).Results;
             List<UserDTOn> result = new List<UserDTOn>();
-            foreach(var step in path)
+            foreach (var step in path)
             {
-                foreach(var s in step.shortestPath.ToList()) { result.Add(s.Data); }
+                foreach (var s in step.shortestPath.ToList()) { result.Add(s.Data); }
             }
             return result;
+        }
+
+        public List<UserDTOn> GetFriends(int id)
+        {
+            return _client.Cypher
+                .Match("(u:User)")
+                .Match("(u)-[:FRIEND*1]-(f)")
+                .Where((UserDTOn u) => u.userId == id)
+                .Return(f => f.As<UserDTOn>())
+                .Results.ToList();
         }
 
         public void UpdateUser(UserDTOn user)
         {
             throw new NotImplementedException();
         }
-
-        public List<UserDTOn> GetUsers()
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }
