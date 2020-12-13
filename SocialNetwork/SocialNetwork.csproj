@@ -121,9 +121,21 @@
     <Content Include="Core\Compression\Zstandard\lib\win\libzstd.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BusunessLogic\BusunessLogic.csproj">
+      <Project>{2130305d-98f8-42c8-b099-fe7fef03a86a}</Project>
+      <Name>BusunessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DALNeo4j\DALNeo4j.csproj">
+      <Project>{dd522bed-bd9e-401d-8a8a-142d577422c9}</Project>
+      <Name>DALNeo4j</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{de8e8732-ddb6-4344-9a57-eb3387d83f91}</Project>
       <Name>DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DTO.Neo4j\DTONeo4j.csproj">
+      <Project>{ed7545fe-dd27-4665-8385-c317304d3bca}</Project>
+      <Name>DTONeo4j</Name>
     </ProjectReference>
     <ProjectReference Include="..\DTO\DTO.csproj">
       <Project>{f1feba60-1b9f-4415-8e14-81e74798a6d8}</Project>

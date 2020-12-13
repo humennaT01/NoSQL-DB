@@ -1,5 +1,11 @@
-﻿using DAL.Concrete;
+﻿using BusunessLogic.Concrete;
+using BusunessLogic.Interfaces;
+using DAL.Concrete;
+using DAL.Interfaces;
+using DALNeo4j.Concrete;
+using DALNeo4j.Interfaces;
 using DTO;
+using DTO.Neo4j;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +16,18 @@ namespace SocialNetwork.Menu
 {
     public class MainMenu
     {
-        private string connectionString = "mongodb://localhost:27017";
+        private IAuthManager _authManager;
+        private IUserManager _userManager;
+        private IPostManager _postManager;
 
-        public MainMenu() { }
+        public MainMenu() {
+            IUserDal userM = new UserDal();
+            IPostDal post = new PostDal();
+            IUserDALn userN = new UserDALn();
+            _authManager = new AuthManager(userM);
+            _userManager = new UserManager(userM, userN);
+            _postManager = new PostManager(post);
+        }
 
         public void startWork()
         {
@@ -23,7 +38,7 @@ namespace SocialNetwork.Menu
                 "\n0. Exit.");
             int step;
             bool flag = true;
-            UserMenu menu = new UserMenu(connectionString);
+            UserMenu menu = new UserMenu(_authManager, _userManager, _postManager);
             while (flag)
             {
                 try
@@ -56,16 +71,21 @@ namespace SocialNetwork.Menu
 
         private UserDTO createNewAccount()
         {
-            UserDal dal = new UserDal(connectionString);
             UserDTO user = new UserDTO();
+            UserDTOn userNeo = new UserDTOn();
 
             Console.WriteLine("\t\t~NEW USER~ ");
             Console.WriteLine("Input FirstName: ");
-            user.FirstName = Console.ReadLine();
+            string firstName = Console.ReadLine();
             Console.WriteLine("Input LastName: ");
-            user.LastName = Console.ReadLine();
+            string lastName = Console.ReadLine();
             Console.WriteLine("Input Email:");
             user.Email = Console.ReadLine();
+
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            userNeo.firstName = firstName;
+            userNeo.lastName = lastName;
 
             bool flag = true;
             string login;
@@ -76,7 +96,7 @@ namespace SocialNetwork.Menu
                 {
                     Console.WriteLine("Input Login:");
                     login = Console.ReadLine();
-                    List<UserDTO> users = dal.GetAllUsers();
+                    List<UserDTO> users = _userManager.GetAllUsersM();
                     bool isFind = false;
                     foreach (UserDTO u in users)
                     {
@@ -89,6 +109,7 @@ namespace SocialNetwork.Menu
                     if (isFind == false)
                     {
                         user.Login = login;
+                        userNeo.login = login;
                         flag = false;
                     }
                 }
@@ -99,73 +120,45 @@ namespace SocialNetwork.Menu
                 }
             }
             Console.WriteLine("Input Password:");
-            string password = Console.ReadLine();
+            user.Password = Console.ReadLine();
 
             user.Interests = new List<string>();
             user.Friends = new List<int>();
 
-            dal.CreateUser(user);
+            _userManager.CreateUser(userNeo, user);
             return user;
         }
 
         private UserDTO enterLogin()
         {
-            Console.Write("Please enter your login: ");
             bool flag = true;
             string login;
-            UserDal dal = new UserDal(connectionString);
-            UserDTO user = null;
+            string pass;
+            UserDTO user = new UserDTO();
             while (flag)
             {
                 try
                 {
+                    Console.Write("Please enter your login: ");
                     login = Console.ReadLine();
-                    List<UserDTO> users = dal.GetAllUsers();
-                    bool isFind = false;
-                    foreach (UserDTO u in users)
+                    Console.Write("Please enter password: ");
+                    pass = Console.ReadLine();
+                    user = _authManager.LogIn(login, pass);
+                    if (user == null) throw new Exception();
+                    else
                     {
-                        if (u.Login == login)
-                        {
-                            isFind = true;
-                            user = u;
-                            enterPassword(user);
-                            return user;
-                            //flag = false;
-                        }
+                        return user;
+                        flag = false;
                     }
-                    if (isFind == false) throw new Exception();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Console.WriteLine("Sorry, we can not find user with such login!"
+                    Console.WriteLine("Sorry, login or email is wrong!"
                         + "\nTry again.");
                 }
             }
             return user;
         }
-
-        private void enterPassword(UserDTO user)
-        {
-            bool flag = true;
-            string password;
-            while (flag)
-            {
-                try
-                {
-                    Console.Write("Please enter password: ");
-                    password = Console.ReadLine();
-                    if (password == user.Password) flag = false;
-                    else throw new Exception();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    Console.WriteLine("Sorry, password is wrong!"
-                        + "\nTry again.");
-                }
-            }
-        }
-
     }
 }

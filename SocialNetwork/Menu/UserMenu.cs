@@ -1,5 +1,8 @@
-﻿using DAL.Concrete;
+﻿using BusunessLogic.Concrete;
+using BusunessLogic.Interfaces;
+using DAL.Concrete;
 using DTO;
+using DTO.Neo4j;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +13,14 @@ namespace SocialNetwork.Menu
 {
     internal class UserMenu
     {
-        private string connectionString;
-        private PostDal postDal;
-        private UserDal userDal;
+        private IAuthManager _authManager;
+        private IUserManager _userManager;
+        private IPostManager _postManager;
 
-        public UserMenu(string connectionString) {
-            this.connectionString = connectionString;
-            postDal = new PostDal(connectionString);
-            userDal = new UserDal(connectionString);
+        public UserMenu(IAuthManager authManager, IUserManager userManager, IPostManager postManager) {
+            _authManager = authManager;
+            _userManager = userManager;
+            _postManager = postManager;
         }
 
         public void start(UserDTO user)
@@ -76,15 +79,15 @@ namespace SocialNetwork.Menu
 
         private void getPosts(UserDTO user)
         {
-            List<UserDTO> friends = getAllFriends(user);
-            List<PostDTO> allPosts = postDal.GetAllPosts();
+            List<UserDTOn> friends = _userManager.GetFriends(_userManager.GetUserByMongoId(user.UserId).userId);
+            List<PostDTO> allPosts = _postManager.GetAllPosts();
             List<PostDTO> post = new List<PostDTO>();
 
             foreach (PostDTO p in allPosts)
             {
-                foreach (UserDTO u in friends)
+                foreach (UserDTOn u in friends)
                 {
-                    if (u.UserId == p.UserID) post.Add(p);
+                    if (_userManager.GetUserByNeoId(u.userId).UserId == p.UserID) post.Add(p);
                 }
             }
 
@@ -92,14 +95,15 @@ namespace SocialNetwork.Menu
             else
             {
                 showPosts(post);
-                Console.WriteLine("\nYou can using postId: \n" +
-                    "1. Add comment." +
-                    "2. Like." +
-                    "0. Exit.");
                 int step;
                 bool flag = true;
                 while (flag)
                 {
+                    Console.WriteLine("\nYou can using postId to: " +
+                    "\n1. Add comment." +
+                    "\n2. Like." +
+                    "\n0. Exit." +
+                    "\nSo, enter postId : ");
                     try
                     {
                         step = Convert.ToInt32(Console.ReadLine());
@@ -113,7 +117,7 @@ namespace SocialNetwork.Menu
                             case 2:
                                 id = Convert.ToInt32(Console.ReadLine());
                                 foreach(PostDTO p in post){
-                                    if (id == p.PostId) postDal.Like(id);
+                                    if (id == p.PostId) _postManager.Like(id);
                                 }
                                 break;
                             case 0:
@@ -143,14 +147,14 @@ namespace SocialNetwork.Menu
             Console.WriteLine("\n");
         }
 
-        private void showFriends(List<UserDTO> friends)
+        private void showFriends(List<UserDTOn> friends)
         {
             Console.WriteLine("\n\t------Friends-----");
             Console.WriteLine($"{"-UserId-"}\t{"-Login-"}\t{"-FirstName-"}\t{"-LastName-"}");
             foreach (var f in friends)
             {
                 Console.WriteLine("\t{0}\t{1}\t{2}\t{3}\t",
-                        f.UserId, f.Login, f.FirstName, f.LastName);
+                        f.userId, f.login, f.firstName, f.lastName);
             }
             Console.WriteLine("\n");
         }
@@ -169,6 +173,7 @@ namespace SocialNetwork.Menu
 
         private void updating(UserDTO user)
         {
+            UserDTOn neoUser = _userManager.GetUserByMongoId(user.UserId);
             bool flag = true;
             while (flag)
             {
@@ -183,11 +188,15 @@ namespace SocialNetwork.Menu
                     {
                         case 1:
                             Console.WriteLine("Input new FirstName: ");
-                            user.FirstName = Console.ReadLine();
+                            string firstName = Console.ReadLine();
+                            user.FirstName = firstName;
+                            neoUser.firstName = firstName;
                             break;
                         case 2:
                             Console.WriteLine("Input new LastName: ");
-                            user.LastName = Console.ReadLine();
+                            string lastName = Console.ReadLine();
+                            user.LastName = lastName;
+                            neoUser.lastName = lastName;
                             break;
                         case 3:
                             Console.WriteLine("Input new Email: ");
@@ -215,18 +224,13 @@ namespace SocialNetwork.Menu
                     Console.WriteLine("Try again, or input 0 to exit.");
                 }
             }
-            userDal.UpdateUser(user);
+            _userManager.UpdateUser(user,neoUser);
         }
 
-        private List<UserDTO> getAllFriends(UserDTO user)
+        private List<UserDTOn> getAllFriends(UserDTO user)
         {
-            List<int> friendId = user.Friends;
-            List<UserDTO> friends = new List<UserDTO>();
-            foreach(int id in friendId)
-            {
-                friends.Add(userDal.GetUserById(id));
-            }
-            return friends;
+            int id = _userManager.GetUserByMongoId(user.UserId).userId;
+            return _userManager.GetFriends(id);
         }
 
         private void addComment(UserDTO user, List<PostDTO> post, int id)
@@ -241,7 +245,7 @@ namespace SocialNetwork.Menu
             com.Text = comment;
             foreach (PostDTO p in post)
             {
-                if (id == p.PostId) postDal.AddComment(id, com);
+                if (id == p.PostId) _postManager.AddComment(id, com);
             }
         }
 
@@ -249,14 +253,9 @@ namespace SocialNetwork.Menu
         {
             Console.WriteLine("Plese enter Login person you want to add to friendsList:");
             string login = Console.ReadLine();
-            int id = 0;
-            foreach (UserDTO u in userDal.GetAllUsers())
-            {
-                if (u.Login == login) id = u.UserId;
-            }
-            if (id != 0) user.Friends.Add(id);
-            else Console.WriteLine("There are no user with that login!");
-            userDal.UpdateUser(user);
+            UserDTOn neoUser = _userManager.GetUserByMongoId(user.UserId);
+            UserDTOn friend = _userManager.GetUserByLogin(login);
+            _userManager.AddFriend(neoUser, friend);
         }
 
         private void deleteFriend(UserDTO user)
@@ -264,13 +263,9 @@ namespace SocialNetwork.Menu
             showFriends(getAllFriends(user));
             Console.WriteLine("Plese enter userId that you want to delete from your friend list:");
             int id = Convert.ToInt32(Console.ReadLine());
-            int count = 0;
-            foreach(UserDTO f in getAllFriends(user))
-            {
-                if(f.UserId == id) user.Friends.Remove(count);
-                count++;
-            }
-            userDal.UpdateUser(user);
+            UserDTOn neoUser = _userManager.GetUserByMongoId(user.UserId);
+            UserDTOn friend = _userManager.GetUserNeo4j(id);
+            _userManager.RemoveFriend(neoUser, friend);
         }
 
         private void addNewPost(int userId)
@@ -285,7 +280,7 @@ namespace SocialNetwork.Menu
             post.InsertTime = DateTime.UtcNow;
             post.UpdateTime = DateTime.UtcNow;
             post.UserID = userId;
-            postDal.CreatePost(post);
+            _postManager.CreatePost(post);
         }
     }
 }
